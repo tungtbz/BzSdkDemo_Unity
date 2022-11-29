@@ -9,6 +9,7 @@ public class Test : MonoBehaviour
     private void Start()
     {
         BzIOSBridge.Instance.Warmup();
+        //BzIOSBridge.Instance.SetDebugMode(true);
     }
 
     public void IsRewardVideoAvailable()
@@ -36,6 +37,11 @@ public class Test : MonoBehaviour
         {
             {"test_param_name","test_param_value"} 
         });
+    }
+
+    public void ShowLogin()
+    {
+        BzIOSBridge.Instance.OpenLoginScene();
     }
 #endif
 }

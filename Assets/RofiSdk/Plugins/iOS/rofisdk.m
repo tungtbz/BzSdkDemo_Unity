@@ -1,11 +1,4 @@
-//
-//  NSObject+bzsdk.m
-//  bzsdk
-//
-//  Created by HeroFi-AccountGP on 02/11/2022.
-//
-
-#import "bzsdk.h"
+#import "rofisdk.h"
 
 // Converts NSString to C style string by way of copy (Mono will free it)
 #define MakeStringCopy( _x_ ) ( _x_ != NULL && [_x_ isKindOfClass:[NSString class]] ) ? strdup( [_x_ UTF8String] ) : NULL
@@ -23,11 +16,11 @@ extern "C" {
 }
 #endif
 
-@implementation bzsdk
+@implementation rofisdk
 char *const BZSDK_EVENTS = "BzSDKEvent";
 
-+ (bzsdk *) sharedObject {
-    static bzsdk *sharedClass = nil;
++ (rofisdk *) sharedObject {
+    static rofisdk *sharedClass = nil;
     static dispatch_once_t onceToken;
     
     dispatch_once(&onceToken, ^{
@@ -44,9 +37,82 @@ char *const BZSDK_EVENTS = "BzSDKEvent";
     return self;
 }
 
+-(void) setDebug:(BOOL)isDebug{
+    [[RofiLoginService sharedObject] setIsDebug:isDebug];
+}
+
+-(void) setloginCallback{
+    NSString *filePath = [[NSBundle mainBundle] pathForResource:@"Info" ofType:@"plist"];
+    NSDictionary *plistData = [NSDictionary dictionaryWithContentsOfFile:filePath];
+    NSString* iosClientId = [plistData objectForKey:@"IosClientId"];
+    
+    _signInConfig = [[GIDConfiguration alloc] initWithClientID:iosClientId];
+    
+    [[RofiLoginService sharedObject] setBlockCallbackWhenLogedIn:^(NSString * _Nonnull data) {
+        NSLog(@"~~~~~login data: %@",data);
+        //send data to unity
+        UnitySendMessage(BZSDK_EVENTS, "onLoginInComplete", MakeStringCopy(data));
+    }];
+    
+    UIViewController* rootViewController = [UIApplication sharedApplication].keyWindow.rootViewController;
+    
+    // Do any additional setup after loading the view.
+    [[RofiLoginService sharedObject] setBlockCallbackWhenClickLoginFb:^{
+        FBSDKLoginManager *loginManager = [[FBSDKLoginManager alloc] init];
+        [loginManager logInWithPermissions:@[@"public_profile"] fromViewController:rootViewController handler:^(FBSDKLoginManagerLoginResult *result, NSError *error) {
+            if(error){
+                NSLog(@"error: %@",[error localizedDescription] );
+            } else if(result.isCancelled){
+                NSLog(@"~~~~~Cancel");
+            }else{
+                if([FBSDKAccessToken currentAccessToken]){
+                    NSString* accessToken = [[FBSDKAccessToken currentAccessToken] tokenString];
+                    NSLog(@"fb access token: %@", accessToken);
+                    
+                    [[RofiLoginService sharedObject] onGetFbToken:accessToken];
+                }else{
+                    NSLog(@"~~~~~Erroror");
+                }
+            }
+        }];
+    }];
+    
+    [[RofiLoginService sharedObject] setBlockCallbackWhenClickLoginGg:^{
+        [GIDSignIn.sharedInstance signInWithConfiguration:[self signInConfig]
+                                 presentingViewController:rootViewController
+                                                 callback:^(GIDGoogleUser * _Nullable user,
+                                                            NSError * _Nullable error) {
+            if (error) {
+                return;
+            }
+            
+            [user.authentication doWithFreshTokens:^(GIDAuthentication * _Nullable authentication,
+                                                     NSError * _Nullable error) {
+                if (error) { return; }
+                if (authentication == nil) { return; }
+                
+                NSString *idToken = authentication.idToken;
+                NSLog(@"token: %@", idToken );
+                [[RofiLoginService sharedObject] onGetGgToken:idToken];
+                
+            }];
+        }];
+    }];
+}
+
+- (void) OpenLoginScene{
+    NSBundle* resourcesBundle = [NSBundle bundleWithIdentifier:@"bravezone.login-module-1"];
+        UIStoryboard *sb = [UIStoryboard storyboardWithName:@"AuthenStoryboard" bundle:resourcesBundle];
+        
+        UIViewController *vc = [sb instantiateViewControllerWithIdentifier:@"loginView"];
+        vc.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
+        [[UIApplication sharedApplication].keyWindow.rootViewController presentViewController:vc animated:YES completion:NULL];
+}
+
 - (void) WarmUp{
     [FIRApp configure];
     [self InitAdsService];
+    [self setloginCallback];
 }
 
 -(void) LogEvent:(NSString *)eventName parameters:(NSDictionary<NSString *,id> *)parameters{
@@ -134,29 +200,37 @@ char *const BZSDK_EVENTS = "BzSDKEvent";
 #ifdef __cplusplus
 extern "C" {
 #endif
+    void _SetDebugMode(bool isDebug){
+        [rofisdk.sharedObject setDebug:isDebug];
+    }
+    
+    void _OpenLoginScene(){
+        [rofisdk.sharedObject OpenLoginScene];
+    }
+    
     void _WarmUp(){
-        [bzsdk.sharedObject WarmUp];
+        [rofisdk.sharedObject WarmUp];
     }
 
     bool _IsRewardAvailable(){
-        return [bzsdk.sharedObject IsVideoRewardAvailable];
+        return [rofisdk.sharedObject IsVideoRewardAvailable];
     }
 
     void _ShowAds(){
-        [bzsdk.sharedObject ShowVideoReward];
+        [rofisdk.sharedObject ShowVideoReward];
     }
 
     void _ShowAdsWithPlacement(char* placementName){
-        [bzsdk.sharedObject ShowVideoReward:GetStringParam(placementName)];
+        [rofisdk.sharedObject ShowVideoReward:GetStringParam(placementName)];
     }
     
     //demo log event
 //    void _LogEventOpenApp(){
-//        [bzsdk.sharedObject LogEvent:kFIREventAppOpen parameters:@{}];
+//        [rofisdk.sharedObject LogEvent:kFIREventAppOpen parameters:@{}];
 //    }
 //
 //    void _LogEventStartLevel(int level){
-//        [bzsdk.sharedObject LogEvent:kFIREventLevelStart parameters:@{
+//        [rofisdk.sharedObject LogEvent:kFIREventLevelStart parameters:@{
 //            kFIRParameterLevel:[NSNumber numberWithInt:level]
 //        }];
 //    }
@@ -174,7 +248,7 @@ extern "C" {
             return;
         }
         
-        [bzsdk.sharedObject LogEvent:GetStringParam(eventName) parameters:dict];
+        [rofisdk.sharedObject LogEvent:GetStringParam(eventName) parameters:dict];
     }
     
 #ifdef __cplusplus
