@@ -1,31 +1,29 @@
-using System;
 using System.Collections.Generic;
-using BzSdk;
+using RofiSdk;
 using UnityEngine;
 
 public class Test : MonoBehaviour
 {
-#if UNITY_IOS
     private void Start()
     {
-        BzIOSBridge.Instance.Warmup();
-        //BzIOSBridge.Instance.SetDebugMode(true);
+        RofiSdkHelper.Instance.NativeBridge.WarmUp();
+        RofiSdkHelper.Instance.NativeBridge.SetDebugMode(true);
     }
 
     public void IsRewardVideoAvailable()
     {
-        var available = BzIOSBridge.Instance.IsVideoRewardAvailable();
+        var available = RofiSdkHelper.Instance.NativeBridge.IsVideoRewardAvailable();
         Debug.Log("IsRewardVideoAvailable " + available);
     }
 
     public void ShowAds()
     {
-        BzIOSBridge.Instance.ShowAds();
+        RofiSdkHelper.Instance.NativeBridge.ShowAds();
     }
 
     public void LogEvent1()
     {
-        BzIOSBridge.Instance.LogEvent("Event_Name_1", new Dictionary<string, string>()
+        RofiSdkHelper.Instance.NativeBridge.LogEvent("Event_Name_1", new Dictionary<string, string>()
         {
             {"click_to_button","btnLogEvent"} 
         });
@@ -33,7 +31,7 @@ public class Test : MonoBehaviour
     
     public void LogEvent2()
     {
-        BzIOSBridge.Instance.LogEvent("Event_Name_2", new Dictionary<string, string>()
+        RofiSdkHelper.Instance.NativeBridge.LogEvent("Event_Name_2", new Dictionary<string, string>()
         {
             {"test_param_name","test_param_value"} 
         });
@@ -41,7 +39,6 @@ public class Test : MonoBehaviour
 
     public void ShowLogin()
     {
-        BzIOSBridge.Instance.OpenLoginScene();
+        RofiSdkHelper.Instance.NativeBridge.OpenLoginScene();
     }
-#endif
 }

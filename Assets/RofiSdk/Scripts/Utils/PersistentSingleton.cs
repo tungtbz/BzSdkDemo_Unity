@@ -1,4 +1,4 @@
-namespace BzSdk
+namespace RofiSdk
 {
     using UnityEngine;
     /// <summary>

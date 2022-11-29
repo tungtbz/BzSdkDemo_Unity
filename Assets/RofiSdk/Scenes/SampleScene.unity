@@ -792,7 +792,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 4
+  m_Text: Show ads
 --- !u!222 &1089482130
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -937,7 +937,9 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 3
+  m_Text: 'Is Ads Avail
+
+'
 --- !u!222 &1487741017
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1016,7 +1018,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 2
+  m_Text: Log event 1
 --- !u!222 &1608342462
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1442,7 +1444,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 1
+  m_Text: Log event 1
 --- !u!222 &2071377748
 CanvasRenderer:
   m_ObjectHideFlags: 0

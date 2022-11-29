@@ -1,11 +1,11 @@
-namespace BzSdk
+﻿namespace RofiSdk
 {
 #if UNITY_IOS
     using System.Collections.Generic;
     using System.Runtime.InteropServices;
     using UnityEngine;
 
-    public class BzIOSBridge : PersistentSingleton<BzIOSBridge>
+    public class iOSBridge : IRofiBridge
     {
         [DllImport("__Internal")]
         private static extern bool _WarmUp();
@@ -22,13 +22,7 @@ namespace BzSdk
         [DllImport("__Internal")]
         private static extern void _SetDebugMode(bool isDebug);
 
-        protected override void Awake()
-        {
-            base.Awake();
-            gameObject.name = "BzSDKEvent";
-        }
-
-        public void Warmup()
+        public void WarmUp()
         {
             _WarmUp();
         }
@@ -47,16 +41,6 @@ namespace BzSdk
         public void LogEvent(string eventName, Dictionary<string, string> eventData)
         {
             _LogEvent(eventName, SimpleJson.Serialize(eventData));
-        }
-
-        public void onRewardedVideoAdRewarded(string description)
-        {
-            Debug.Log("~~~~~~ onRewardedVideoAdRewarded");
-        }
-
-        public void onLoginInComplete(string data)
-        {
-            Debug.Log("~~~~~~ onLoginInComplete" + data);
         }
 
         public void OpenLoginScene()

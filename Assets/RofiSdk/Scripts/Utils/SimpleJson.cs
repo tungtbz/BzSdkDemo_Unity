@@ -8,7 +8,7 @@ using System.Globalization;
 using System.IO;
 using System.Text;
 
-namespace BzSdk
+namespace RofiSdk
 {
 	public static class SimpleJson
 	{
