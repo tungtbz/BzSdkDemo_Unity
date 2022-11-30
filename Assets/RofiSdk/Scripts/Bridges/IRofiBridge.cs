@@ -9,6 +9,7 @@ namespace RofiSdk
         void LogEvent(string eventName, Dictionary<string, string> eventData);
         void SetDebugMode(bool isDebug);
         void OpenLoginScene();
+        void GetUserInfo(string accessToken);
     }
 }
 

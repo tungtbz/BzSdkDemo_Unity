@@ -12,6 +12,7 @@
 
         public void WarmUp()
         {
+            _javaBridge.CallStatic("WarmUp");
         }
 
         public bool IsVideoRewardAvailable()
@@ -26,17 +27,23 @@
 
         public void SetDebugMode(bool isDebug)
         {
-
+            _javaBridge.CallStatic("SetDebug", isDebug);
         }
 
         public void LogEvent(string eventName, Dictionary<string, string> eventData)
         {
-            _javaBridge.CallStatic("LogEventOpenApp");
+            Debug.Log("AndroidBridge log event: " + SimpleJson.Serialize(eventData));
+            _javaBridge.CallStatic("LogEvent",eventName, SimpleJson.Serialize(eventData));
         }
 
         public void OpenLoginScene()
         {
             _javaBridge.CallStatic("OpenLoginScene");
+        }
+
+        public void GetUserInfo(string accessToken)
+        {
+            _javaBridge.CallStatic("GetUserInfo", accessToken);
         }
     }
 }

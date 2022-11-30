@@ -48,6 +48,16 @@
             _OpenLoginScene();
         }
 
+        public void GetUserInfo(string accessToken)
+        {
+            
+        }
+
+        public void GetUserInfo()
+        {
+            
+        }
+
         public void SetDebugMode(bool isDebug)
         {
             _SetDebugMode(isDebug);
