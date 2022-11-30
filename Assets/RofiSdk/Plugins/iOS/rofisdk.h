@@ -21,6 +21,7 @@
 - (void)ShowVideoReward:(NSString*) placement;
 - (void)OpenLoginScene;
 - (void)setDebug:(BOOL) isDebug;
+- (void)getUserInfo:(NSString*) accessToken;
 - (NSString *)getJsonFromObj:(id)obj;
 
 + (rofisdk *) sharedObject;

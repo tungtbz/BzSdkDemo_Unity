@@ -21,7 +21,9 @@
         private static extern void _OpenLoginScene();
         [DllImport("__Internal")]
         private static extern void _SetDebugMode(bool isDebug);
-
+        [DllImport("__Internal")]
+        private static extern void _GetUserInfo(string accessToken);
+        
         public void WarmUp()
         {
             _WarmUp();
@@ -50,12 +52,7 @@
 
         public void GetUserInfo(string accessToken)
         {
-            
-        }
-
-        public void GetUserInfo()
-        {
-            
+            _GetUserInfo(accessToken);
         }
 
         public void SetDebugMode(bool isDebug)

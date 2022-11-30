@@ -38,7 +38,7 @@
             Debug.Log("[Unity] OnLoginComplete " + data);
         }
 
-        public void GetUserInfo(string data)
+        public void OnGetUserInfo(string data)
         {
             Debug.Log("[Unity] GetUserInfo " + data);
         }        
