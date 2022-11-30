@@ -38,6 +38,18 @@
             Debug.Log("[Unity] OnLoginComplete " + data);
         }
 
+        public void GetUserInfo(string data)
+        {
+            Debug.Log("[Unity] GetUserInfo " + data);
+        }        
+        
+        public void OnGetUserInfoFailed(string mesage)
+        {
+            Debug.Log("[Unity] OnGetUserInfoFailed " + mesage);
+        }
+        
+        
+
         #endregion
     }
 }
