@@ -1,9 +1,14 @@
 using System.Collections.Generic;
 using RofiSdk;
 using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.UIElements;
 
 public class Test : MonoBehaviour
 {
+    [SerializeField] private Text _textField;
+    
+    private string accessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiIxNDZiN2VlNi00ODgxLTRmM2ItYWIyMi1kNmU5Y2I5N2ViM2UiLCJlbWFpbCI6IiIsIndhbGxldCI6IiIsIm5iZiI6MTY2OTc4NjgyMiwiZXhwIjoxNjY5ODIyODIyLCJpYXQiOjE2Njk3ODY4MjIsImlzcyI6ImlkLnJvZmkuZ2FtZXMiLCJhdWQiOiJhcGkucm9maS5nYW1lcyJ9.eXZ-THGv0x-ZYji31t3RZdseG6Q5ocPffAXYP3HZ4g0";
     private void Start()
     {
         RofiSdkHelper.Instance.NativeBridge.WarmUp();
@@ -41,5 +46,16 @@ public class Test : MonoBehaviour
     public void ShowLogin()
     {
         RofiSdkHelper.Instance.NativeBridge.OpenLoginScene();
+    }
+
+    public void CallRefCheckin()
+    {
+        accessToken = RofiSdkHelper.Instance.NativeBridge.GetCurrentAccessToken();
+        RofiSdkHelper.Instance.NativeBridge.RefCheckIn(accessToken, "2","IDLNEW","3R5VEKBU");
+    }
+
+    public void GetRefCode()
+    {
+        _textField.text = string.Format("Ref code: {0}",RofiSdkHelper.Instance.NativeBridge.GetRefCodeCached());
     }
 }
