@@ -2,9 +2,11 @@
 {
     using System.Collections.Generic;
     using UnityEngine;
+
     public class AndroidBridge : IRofiBridge
     {
         readonly AndroidJavaClass _javaBridge;
+
         public AndroidBridge()
         {
             _javaBridge = new AndroidJavaClass(RofiConstants.ANDROID_BRIDGE_CLASS);
@@ -33,7 +35,7 @@
         public void LogEvent(string eventName, Dictionary<string, string> eventData)
         {
             Debug.Log("AndroidBridge log event: " + SimpleJson.Serialize(eventData));
-            _javaBridge.CallStatic("LogEvent",eventName, SimpleJson.Serialize(eventData));
+            _javaBridge.CallStatic("LogEvent", eventName, SimpleJson.Serialize(eventData));
         }
 
         public void OpenLoginScene()
@@ -45,6 +47,22 @@
         {
             _javaBridge.CallStatic("GetUserInfo", accessToken);
         }
+
+        public void RefCheckIn(string accessToken, string gameId, string camId, string refCode)
+        {
+            Debug.Log("[Unity] AndroidBridge: RefCheckIn");
+            
+            _javaBridge.CallStatic("RefCheckIn", accessToken, gameId, camId, refCode);
+        }
+
+        public string GetRefCodeCached()
+        {
+            return _javaBridge.CallStatic<string>("GetRefCodeCached");
+        }
+
+        public string GetCurrentAccessToken()
+        {
+            return _javaBridge.CallStatic<string>("GetCurrentAccessToken");
+        }
     }
 }
-

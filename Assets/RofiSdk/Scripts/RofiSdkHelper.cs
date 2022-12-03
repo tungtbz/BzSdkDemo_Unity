@@ -47,9 +47,16 @@
         {
             Debug.Log("[Unity] OnGetUserInfoFailed " + mesage);
         }
-        
-        
 
+        public void OnRefCheckInSuccess()
+        {
+            Debug.Log("[Unity] OnRefCheckInSuccess ");
+        }
+
+        public void OnRefCheckInFail(string message)
+        {
+            Debug.Log("[Unity] OnGetUserInfoFailed " + message);
+        }
         #endregion
     }
 }

@@ -9,21 +9,31 @@
     {
         [DllImport("__Internal")]
         private static extern bool _WarmUp();
+
         [DllImport("__Internal")]
         private static extern bool _IsRewardAvailable();
+
         [DllImport("__Internal")]
         private static extern void _ShowAds();
+
         [DllImport("__Internal")]
         private static extern void _ShowAdsWithPlacement(string placementName);
+
         [DllImport("__Internal")]
         private static extern void _LogEvent(string eventName, string eventData);
+
         [DllImport("__Internal")]
         private static extern void _OpenLoginScene();
+
         [DllImport("__Internal")]
         private static extern void _SetDebugMode(bool isDebug);
+
         [DllImport("__Internal")]
         private static extern void _GetUserInfo(string accessToken);
-        
+
+        [DllImport("__Internal")]
+        private static extern void _RefCheckIn(string accessToken, string gameId, string camId, string refCode);
+
         public void WarmUp()
         {
             _WarmUp();
@@ -55,10 +65,16 @@
             _GetUserInfo(accessToken);
         }
 
+        public void RefCheckIn(string accessToken, string gameId, string camId, string refCode)
+        {
+            _RefCheckIn(accessToken, gameId, camId, refCode);
+        }
+
         public void SetDebugMode(bool isDebug)
         {
             _SetDebugMode(isDebug);
         }
     }
+
 #endif
 }
