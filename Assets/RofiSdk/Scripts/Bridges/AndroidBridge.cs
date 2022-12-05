@@ -6,7 +6,7 @@
     public class AndroidBridge : IRofiBridge
     {
         readonly AndroidJavaClass _javaBridge;
-
+        private string _cacheRefCode;
         public AndroidBridge()
         {
             _javaBridge = new AndroidJavaClass(RofiConstants.ANDROID_BRIDGE_CLASS);
@@ -57,7 +57,8 @@
 
         public string GetRefCodeCached()
         {
-            return _javaBridge.CallStatic<string>("GetRefCodeCached");
+            // return _javaBridge.CallStatic<string>("GetRefCodeCached");
+            return _cacheRefCode;
         }
 
         public string GetCurrentAccessToken()
@@ -67,7 +68,25 @@
 
         public bool DeepLinkHandle(string url)
         {
-            return true;
+            var splitUrl = url.Split(':');
+            Debug.Log("DeepLinkHandle: splitUrl[1]: " + splitUrl[1]);
+            var deppLinkParts = splitUrl[1].Split('/');
+            foreach (var str in deppLinkParts)
+            {
+                Debug.Log("DeepLinkHandle: " + str);
+            }
+
+            var partCount = deppLinkParts.Length;
+            var deeplinkType = deppLinkParts[partCount - 2];
+            if (deeplinkType.Equals("referral"))
+            {
+                var refCode = deppLinkParts[partCount - 1];
+                Debug.Log("DeepLinkHandle --> referral --> refCode: " + refCode);
+                // _SetRefCodeCached(refCode);
+                _cacheRefCode = refCode;
+                return true;
+            }
+            return false;
         }
     }
 }
