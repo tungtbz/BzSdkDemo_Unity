@@ -206,17 +206,61 @@ char *const SDK_OBJECT_NAME = "RofiSdkHelper";
     }
 }
 
+- (void)checkInRefCode:(NSString *)accessToken gameId:(NSString *)gameId camId:(NSString *)camId refCode:(NSString *)refCode{
+    [[[RofiLoginService sharedObject] getNetworkService] checkInRefCode:accessToken gameId:gameId camId:camId refCode:refCode callback:^(int code, NSString * _Nullable data) {
+        if(code == OK_CODE){
+            NSLog(@"Check in ref code OK!");
+            UnitySendMessage(SDK_OBJECT_NAME, "OnRefCheckInSuccess", MakeStringCopy(@""));
+            
+        }else{
+            NSLog(@"Check in ref code Failed!");
+            UnitySendMessage(SDK_OBJECT_NAME, "OnRefCheckInFail", MakeStringCopy(data));
+        }
+    }];
+}
+
+-(NSString*) getCurrentAccessToken{
+
+    return [[[RofiLoginService sharedObject] getNetworkService] getCachedAccessToken];
+}
+
+-(void) setCachedRefCode :(NSString*) refCode{
+    NSLog(@"setCachedRefCode %@",refCode);
+    [[RofiLoginService sharedObject] setCachedRefCode:refCode];
+}
+
+-(NSString*) getCachedRefCode{
+    return [[RofiLoginService sharedObject] getCachedRefCode];
+}
+
 @end
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+    
+    void _SetRefCodeCached(char* refCode){
+        [rofisdk.sharedObject setCachedRefCode:GetStringParam(refCode)];
+    }
+    
+    char* _GetCurrentAccessToken(){
+        return MakeStringCopy([[rofisdk sharedObject] getCurrentAccessToken]);
+    }
+    
+    char* _GetRefCodeCached(){
+        return MakeStringCopy([[rofisdk sharedObject] getCachedRefCode]);
+    }
+    
     void _SetDebugMode(bool isDebug){
         [rofisdk.sharedObject setDebug:isDebug ? TRUE : FALSE];
     }
     
     void _GetUserInfo(char* accessToken){
         [rofisdk.sharedObject getUserInfo:GetStringParam(accessToken)];
+    }
+    
+    void _RefCheckIn(char* accessToken, char* gameId, char* camId, char* refCode){
+        [rofisdk.sharedObject checkInRefCode:GetStringParam(accessToken) gameId:GetStringParam(gameId) camId:GetStringParam(camId) refCode:GetStringParam(refCode)];
     }
     
     void _OpenLoginScene(){

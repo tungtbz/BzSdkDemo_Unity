@@ -13,6 +13,7 @@ namespace RofiSdk
         void RefCheckIn(string accessToken, string gameId, string camId, string refCode);
         string GetRefCodeCached();
         string GetCurrentAccessToken();
+        bool DeepLinkHandle(string url);
     }
 }
 
