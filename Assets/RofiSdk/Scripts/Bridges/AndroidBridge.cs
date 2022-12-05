@@ -64,5 +64,10 @@
         {
             return _javaBridge.CallStatic<string>("GetCurrentAccessToken");
         }
+
+        public bool DeepLinkHandle(string url)
+        {
+            return true;
+        }
     }
 }

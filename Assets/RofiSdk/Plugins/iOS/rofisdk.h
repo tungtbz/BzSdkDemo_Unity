@@ -14,16 +14,24 @@
 @property (strong,nonatomic) GIDConfiguration* _Nonnull signInConfig;
 
 - (void)WarmUp;
-- (void)LogEvent: (NSString*) eventName parameters:(nullable NSDictionary<NSString *, id> *)parameters;
+- (void)LogEvent: (NSString* _Nonnull) eventName parameters:(nullable NSDictionary<NSString *, id> *)parameters;
 - (void)InitAdsService;
 - (BOOL)IsVideoRewardAvailable;
 - (void)ShowVideoReward;
-- (void)ShowVideoReward:(NSString*) placement;
+- (void)ShowVideoReward:(NSString* _Nullable) placement;
 - (void)OpenLoginScene;
 - (void)setDebug:(BOOL) isDebug;
-- (void)getUserInfo:(NSString*) accessToken;
-- (NSString *)getJsonFromObj:(id)obj;
+- (void)getUserInfo:(NSString* _Nonnull) accessToken;
+- (void)checkInRefCode:(NSString* _Nonnull) accessToken
+                gameId:(NSString* _Nonnull)gameId
+                 camId:(NSString* _Nonnull)camId
+               refCode:(NSString* _Nonnull)refCode;
 
-+ (rofisdk *) sharedObject;
+- (NSString *_Nonnull)getJsonFromObj:(id _Nonnull)obj;
+
+- (NSString *_Nonnull)getCurrentAccessToken;
+-(void) setCachedRefCode :(NSString*) refCode;
+
++ (rofisdk *_Nonnull) sharedObject;
 
 @end

@@ -8,8 +8,14 @@
     public class iOSBridge : IRofiBridge
     {
         [DllImport("__Internal")]
+        private static extern string _GetRefCodeCached();
+        [DllImport("__Internal")]
+        private static extern string _SetRefCodeCached(string refCode);
+        
+        [DllImport("__Internal")]
+        private static extern string _GetCurrentAccessToken();
+        [DllImport("__Internal")]
         private static extern bool _WarmUp();
-
         [DllImport("__Internal")]
         private static extern bool _IsRewardAvailable();
 
@@ -34,6 +40,8 @@
         [DllImport("__Internal")]
         private static extern void _RefCheckIn(string accessToken, string gameId, string camId, string refCode);
 
+        private string _cacheRefCode;
+        
         public void WarmUp()
         {
             _WarmUp();
@@ -68,6 +76,44 @@
         public void RefCheckIn(string accessToken, string gameId, string camId, string refCode)
         {
             _RefCheckIn(accessToken, gameId, camId, refCode);
+        }
+
+        public string GetRefCodeCached()
+        {
+            return _cacheRefCode;
+        }
+
+        public string GetCurrentAccessToken()
+        {
+            return _GetCurrentAccessToken();
+        }
+        
+        //    idolworlddl://invite.rofi.games/referral/HSHSHS
+        public bool DeepLinkHandle(string url)
+        {
+            var splitUrl = url.Split(':');
+            if (!splitUrl[0].Equals("idolworlddl"))
+            {
+                return false;
+            }
+            Debug.Log("DeepLinkHandle: splitUrl[1]: " + splitUrl[1]);
+            var deppLinkParts = splitUrl[1].Split('/');
+            foreach (var str in deppLinkParts)
+            {
+                Debug.Log("DeepLinkHandle: " + str);
+            }
+
+            var partCount = deppLinkParts.Length;
+            var deeplinkType = deppLinkParts[partCount - 2];
+            if (deeplinkType.Equals("referral"))
+            {
+                var refCode = deppLinkParts[partCount - 1];
+                Debug.Log("DeepLinkHandle --> referral --> refCode: " + refCode);
+                // _SetRefCodeCached(refCode);
+                _cacheRefCode = refCode;
+                return true;
+            }
+            return false;
         }
 
         public void SetDebugMode(bool isDebug)
