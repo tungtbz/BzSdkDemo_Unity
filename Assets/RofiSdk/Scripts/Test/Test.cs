@@ -51,11 +51,17 @@ public class Test : MonoBehaviour
     public void CallRefCheckin()
     {
         accessToken = RofiSdkHelper.Instance.NativeBridge.GetCurrentAccessToken();
-        RofiSdkHelper.Instance.NativeBridge.RefCheckIn(accessToken, "2","IDLNEW","3R5VEKBU");
+        RofiSdkHelper.Instance.NativeBridge.RefCheckIn(accessToken, "2","IDLNEW", RofiSdkHelper.Instance.NativeBridge.GetRefCodeCached());
     }
 
     public void GetRefCode()
     {
         _textField.text = string.Format("Ref code: {0}",RofiSdkHelper.Instance.NativeBridge.GetRefCodeCached());
+    }
+
+    public void JoinCampaign()
+    {
+        accessToken = RofiSdkHelper.Instance.NativeBridge.GetCurrentAccessToken();
+        RofiSdkHelper.Instance.NativeBridge.JoinCampaign(accessToken,"IDLNEW");
     }
 }

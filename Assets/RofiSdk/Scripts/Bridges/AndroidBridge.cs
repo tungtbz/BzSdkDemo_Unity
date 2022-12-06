@@ -41,6 +41,10 @@
         public void OpenLoginScene()
         {
             _javaBridge.CallStatic("OpenLoginScene");
+            if (!string.IsNullOrEmpty(_cacheRefCode))
+            {
+                _javaBridge.CallStatic("SetRefCodeCached", _cacheRefCode);
+            }
         }
 
         public void GetUserInfo(string accessToken)
@@ -87,6 +91,11 @@
                 return true;
             }
             return false;
+        }
+
+        public void JoinCampaign(string accessToken, string campaignId)
+        {
+            _javaBridge.CallStatic("JoinCampaign", accessToken, campaignId);
         }
     }
 }

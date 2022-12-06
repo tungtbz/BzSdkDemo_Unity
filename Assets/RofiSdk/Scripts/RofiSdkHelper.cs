@@ -78,6 +78,16 @@
             Debug.Log("[Unity] OnGetUserInfoFailed " + message);
         }
 
+        public void OnGetRefDataSuccess(string data)
+        {
+            Debug.Log("[Unity] OnGetRefDataSuccess " + data);
+        }
+
+        public void OnGetRefDataFail(string message)
+        {
+            Debug.Log("[Unity] OnGetRefDataFail " + message);  
+        }
+
         #endregion
     }
 }

@@ -14,6 +14,7 @@ namespace RofiSdk
         string GetRefCodeCached();
         string GetCurrentAccessToken();
         bool DeepLinkHandle(string url);
+        void JoinCampaign(string accessToken, string campaignId);
     }
 }
 
