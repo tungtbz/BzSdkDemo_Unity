@@ -10,11 +10,11 @@ namespace RofiSdk
         void SetDebugMode(bool isDebug);
         void OpenLoginScene();
         void GetUserInfo(string accessToken);
-        void RefCheckIn(string accessToken, string gameId, string camId, string refCode);
+        void RefCheckIn(string accessToken, string refCode);
         string GetRefCodeCached();
         string GetCurrentAccessToken();
         bool DeepLinkHandle(string url);
-        void JoinCampaign(string accessToken, string campaignId);
+        void JoinCampaign(string accessToken);
     }
 }
 

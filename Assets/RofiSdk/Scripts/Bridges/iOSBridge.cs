@@ -11,7 +11,6 @@
         private static extern string _GetRefCodeCached();
         [DllImport("__Internal")]
         private static extern string _SetRefCodeCached(string refCode);
-        
         [DllImport("__Internal")]
         private static extern string _GetCurrentAccessToken();
         [DllImport("__Internal")]
@@ -38,13 +37,17 @@
         private static extern void _GetUserInfo(string accessToken);
 
         [DllImport("__Internal")]
-        private static extern void _RefCheckIn(string accessToken, string gameId, string camId, string refCode);
+        private static extern void _RefCheckIn(string accessToken, string refCode);
 
-        private string _cacheRefCode;
+        [DllImport("__Internal")]
+        private static extern void _JoinCampaign(string accessToken);
         
+        // private string _cacheRefCode;
+        // private bool _isWarmedUp;
         public void WarmUp()
         {
             _WarmUp();
+            // _isWarmedUp = true;
         }
 
         public bool IsVideoRewardAvailable()
@@ -65,6 +68,10 @@
 
         public void OpenLoginScene()
         {
+            // if (!string.IsNullOrEmpty(_cacheRefCode))
+            // {
+            //     _SetRefCodeCached(_cacheRefCode);
+            // }
             _OpenLoginScene();
         }
 
@@ -73,14 +80,14 @@
             _GetUserInfo(accessToken);
         }
 
-        public void RefCheckIn(string accessToken, string gameId, string camId, string refCode)
+        public void RefCheckIn(string accessToken, string refCode)
         {
-            _RefCheckIn(accessToken, gameId, camId, refCode);
+            _RefCheckIn(accessToken, refCode);
         }
 
         public string GetRefCodeCached()
         {
-            return _cacheRefCode;
+            return _GetRefCodeCached();
         }
 
         public string GetCurrentAccessToken()
@@ -91,29 +98,34 @@
         //    idolworlddl://invite.rofi.games/referral/HSHSHS
         public bool DeepLinkHandle(string url)
         {
-            var splitUrl = url.Split(':');
-            if (!splitUrl[0].Equals("idolworlddl"))
-            {
-                return false;
-            }
-            Debug.Log("DeepLinkHandle: splitUrl[1]: " + splitUrl[1]);
-            var deppLinkParts = splitUrl[1].Split('/');
-            foreach (var str in deppLinkParts)
-            {
-                Debug.Log("DeepLinkHandle: " + str);
-            }
-
-            var partCount = deppLinkParts.Length;
-            var deeplinkType = deppLinkParts[partCount - 2];
-            if (deeplinkType.Equals("referral"))
-            {
-                var refCode = deppLinkParts[partCount - 1];
-                Debug.Log("DeepLinkHandle --> referral --> refCode: " + refCode);
-                // _SetRefCodeCached(refCode);
-                _cacheRefCode = refCode;
-                return true;
-            }
+            // var splitUrl = url.Split(':');
+            // Debug.Log("DeepLinkHandle: splitUrl[1]: " + splitUrl[1]);
+            // var deppLinkParts = splitUrl[1].Split('/');
+            // foreach (var str in deppLinkParts)
+            // {
+            //     Debug.Log("DeepLinkHandle: " + str);
+            // }
+            //
+            // var partCount = deppLinkParts.Length;
+            // var deeplinkType = deppLinkParts[partCount - 2];
+            // if (deeplinkType.Equals("referral"))
+            // {
+            //     var refCode = deppLinkParts[partCount - 1];
+            //     // Debug.Log("DeepLinkHandle --> referral --> refCode: " + refCode);
+            //     // _SetRefCodeCached(refCode);
+            //     _cacheRefCode = refCode;
+            //     // if (_isWarmedUp)
+            //     // {
+            //     //     _SetRefCodeCached(_cacheRefCode);
+            //     // }
+            //     return true;
+            // }
             return false;
+        }
+
+        public void JoinCampaign(string accessToken)
+        {
+            _JoinCampaign(accessToken);
         }
 
         public void SetDebugMode(bool isDebug)

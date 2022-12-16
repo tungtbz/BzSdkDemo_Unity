@@ -16,7 +16,7 @@
 #region Preprocessor Directives
 // Uncomment this line if you want the container to automatically
 // register the TinyMessenger messenger/event aggregator
-//#define TINYMESSENGER
+#define TINYMESSENGER
 
 // Uncomment this line if you want to internalize this library
 //#define TINYIOC_INTERNAL

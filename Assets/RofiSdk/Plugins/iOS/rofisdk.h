@@ -12,8 +12,9 @@
 
 @interface rofisdk : NSObject <ISRewardedVideoDelegate>
 @property (strong,nonatomic) GIDConfiguration* _Nonnull signInConfig;
+@property (nonatomic) BOOL isWarmUped;
 
-- (void)WarmUp;
+- (void)warmUp;
 - (void)LogEvent: (NSString* _Nonnull) eventName parameters:(nullable NSDictionary<NSString *, id> *)parameters;
 - (void)InitAdsService;
 - (BOOL)IsVideoRewardAvailable;
@@ -22,16 +23,17 @@
 - (void)OpenLoginScene;
 - (void)setDebug:(BOOL) isDebug;
 - (void)getUserInfo:(NSString* _Nonnull) accessToken;
-- (void)checkInRefCode:(NSString* _Nonnull) accessToken
-                gameId:(NSString* _Nonnull)gameId
-                 camId:(NSString* _Nonnull)camId
+
+- (void)checkInRefCode:(NSString* _Nonnull)accessToken
                refCode:(NSString* _Nonnull)refCode;
 
-- (NSString *_Nonnull)getJsonFromObj:(id _Nonnull)obj;
+-(void)joinCampaign:(NSString* _Nonnull) accessToken;
+                    
+-(NSString *_Nonnull)getJsonFromObj:(id _Nonnull)obj;
 
-- (NSString *_Nonnull)getCurrentAccessToken;
+-(NSString *_Nonnull)getCurrentAccessToken;
 -(void) setCachedRefCode :(NSString*) refCode;
 
-+ (rofisdk *_Nonnull) sharedObject;
++(rofisdk *_Nonnull) sharedObject;
 
 @end

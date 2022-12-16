@@ -37,16 +37,34 @@ char *const SDK_OBJECT_NAME = "RofiSdkHelper";
     return self;
 }
 
+- (void) warmUp{
+    if(_isWarmUped) return;
+    
+    [FIRApp configure];
+    [self InitAdsService];
+    [self setupSdk];
+    _isWarmUped = YES;
+}
+
 -(void) setDebug:(BOOL)isDebug{
     NSLog(@"Set Debug %d", isDebug);
     [[RofiLoginService sharedObject] setIsDebug:isDebug];
 }
 
--(void) setloginCallback{
+-(void) setupSdk{
     NSString *filePath = [[NSBundle mainBundle] pathForResource:@"Info" ofType:@"plist"];
     NSDictionary *plistData = [NSDictionary dictionaryWithContentsOfFile:filePath];
-    NSString* iosClientId = [plistData objectForKey:@"IosClientId"];
+
+    NSString* campaignCode = [plistData objectForKey:@"CampaignCode"];
+    [[RofiLoginService sharedObject] setCachedCampaignCode:campaignCode];
     
+    NSString* gameCode = [plistData objectForKey:@"GameCode"];
+    [RofiLoginService sharedObject].cachedGameCode = gameCode;
+    
+    NSLog(@"setupSdk campaignCode: %@",campaignCode);
+    NSLog(@"setupSdk gameCode: %@",gameCode);
+    
+    NSString* iosClientId = [plistData objectForKey:@"IosClientId"];
     _signInConfig = [[GIDConfiguration alloc] initWithClientID:iosClientId];
     
     [[RofiLoginService sharedObject] setBlockCallbackWhenLogedIn:^(NSString * _Nonnull data) {
@@ -108,12 +126,6 @@ char *const SDK_OBJECT_NAME = "RofiSdkHelper";
     UIViewController *vc = [sb instantiateViewControllerWithIdentifier:@"loginView"];
     vc.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
     [[UIApplication sharedApplication].keyWindow.rootViewController presentViewController:vc animated:YES completion:NULL];
-}
-
-- (void) WarmUp{
-    [FIRApp configure];
-    [self InitAdsService];
-    [self setloginCallback];
 }
 
 -(void) LogEvent:(NSString *)eventName parameters:(NSDictionary<NSString *,id> *)parameters{
@@ -206,8 +218,14 @@ char *const SDK_OBJECT_NAME = "RofiSdkHelper";
     }
 }
 
-- (void)checkInRefCode:(NSString *)accessToken gameId:(NSString *)gameId camId:(NSString *)camId refCode:(NSString *)refCode{
-    [[[RofiLoginService sharedObject] getNetworkService] checkInRefCode:accessToken gameId:gameId camId:camId refCode:refCode callback:^(int code, NSString * _Nullable data) {
+- (void)checkInRefCode:(NSString *)accessToken refCode:(NSString *)refCode{
+    NSString* gameCode = [[RofiLoginService sharedObject] cachedGameCode];
+    NSString* campaignCode = [[RofiLoginService sharedObject] cachedCampaignCode];
+    NSLog(@"gameCode: %@",gameCode);
+    NSLog(@"campaignCode: %@",campaignCode);
+    NSLog(@"refCode: %@",refCode);
+    
+    [[[RofiLoginService sharedObject] getNetworkService] checkInRefCode:accessToken gameId:gameCode camId:campaignCode refCode:refCode callback:^(int code, NSString * _Nullable data) {
         if(code == OK_CODE){
             NSLog(@"Check in ref code OK!");
             UnitySendMessage(SDK_OBJECT_NAME, "OnRefCheckInSuccess", MakeStringCopy(@""));
@@ -219,12 +237,26 @@ char *const SDK_OBJECT_NAME = "RofiSdkHelper";
     }];
 }
 
--(NSString*) getCurrentAccessToken{
+-(void)joinCampaign:(NSString *)accessToken{
+    NSString* campaignCode = [[RofiLoginService sharedObject] cachedCampaignCode];
+    [[[RofiLoginService sharedObject] getNetworkService] joinCampaign:accessToken campaignId:campaignCode callback:^(int code, NSString * _Nonnull data) {
+        if(code == OK_CODE){
+            UnitySendMessage(SDK_OBJECT_NAME, "OnGetRefDataSuccess", MakeStringCopy(data));
+        }else{
+            NSLog(@"Check in ref code Failed!");
+            UnitySendMessage(SDK_OBJECT_NAME, "OnGetRefDataFail", MakeStringCopy(data));
+        }
+    }];
+}
 
-    return [[[RofiLoginService sharedObject] getNetworkService] getCachedAccessToken];
+-(NSString*) getCurrentAccessToken{
+    return [[RofiLoginService sharedObject] getCacheAccessToken];
 }
 
 -(void) setCachedRefCode :(NSString*) refCode{
+//    dispatch_async(dispatch_get_main_queue(), ^{
+//
+//    });
     NSLog(@"setCachedRefCode %@",refCode);
     [[RofiLoginService sharedObject] setCachedRefCode:refCode];
 }
@@ -240,7 +272,7 @@ extern "C" {
 #endif
     
     void _SetRefCodeCached(char* refCode){
-        [rofisdk.sharedObject setCachedRefCode:GetStringParam(refCode)];
+//        [rofisdk.sharedObject setCachedRefCode:GetStringParam(refCode)];
     }
     
     char* _GetCurrentAccessToken(){
@@ -259,8 +291,12 @@ extern "C" {
         [rofisdk.sharedObject getUserInfo:GetStringParam(accessToken)];
     }
     
-    void _RefCheckIn(char* accessToken, char* gameId, char* camId, char* refCode){
-        [rofisdk.sharedObject checkInRefCode:GetStringParam(accessToken) gameId:GetStringParam(gameId) camId:GetStringParam(camId) refCode:GetStringParam(refCode)];
+    void _RefCheckIn(char* accessToken, char* refCode){
+        [rofisdk.sharedObject checkInRefCode:GetStringParam(accessToken) refCode:GetStringParam(refCode)];
+    }
+    
+    void _JoinCampaign(char* accessToken){
+        [rofisdk.sharedObject joinCampaign:GetStringParam(accessToken)];
     }
     
     void _OpenLoginScene(){
@@ -268,7 +304,7 @@ extern "C" {
     }
     
     void _WarmUp(){
-        [rofisdk.sharedObject WarmUp];
+        [rofisdk.sharedObject warmUp];
     }
     
     bool _IsRewardAvailable(){
@@ -282,17 +318,6 @@ extern "C" {
     void _ShowAdsWithPlacement(char* placementName){
         [rofisdk.sharedObject ShowVideoReward:GetStringParam(placementName)];
     }
-    
-    //demo log event
-    //    void _LogEventOpenApp(){
-    //        [rofisdk.sharedObject LogEvent:kFIREventAppOpen parameters:@{}];
-    //    }
-    //
-    //    void _LogEventStartLevel(int level){
-    //        [rofisdk.sharedObject LogEvent:kFIREventLevelStart parameters:@{
-    //            kFIRParameterLevel:[NSNumber numberWithInt:level]
-    //        }];
-    //    }
     
     void _LogEvent(char* eventName,char* eventData){
         NSError*error;

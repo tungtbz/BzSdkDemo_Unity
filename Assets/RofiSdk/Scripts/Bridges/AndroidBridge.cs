@@ -52,11 +52,11 @@
             _javaBridge.CallStatic("GetUserInfo", accessToken);
         }
 
-        public void RefCheckIn(string accessToken, string gameId, string camId, string refCode)
+        public void RefCheckIn(string accessToken, string refCode)
         {
             Debug.Log("[Unity] AndroidBridge: RefCheckIn");
             
-            _javaBridge.CallStatic("RefCheckIn", accessToken, gameId, camId, refCode);
+            _javaBridge.CallStatic("RefCheckIn", accessToken, refCode);
         }
 
         public string GetRefCodeCached()
@@ -93,9 +93,9 @@
             return false;
         }
 
-        public void JoinCampaign(string accessToken, string campaignId)
+        public void JoinCampaign(string accessToken)
         {
-            _javaBridge.CallStatic("JoinCampaign", accessToken, campaignId);
+            _javaBridge.CallStatic("JoinCampaign", accessToken);
         }
     }
 }
