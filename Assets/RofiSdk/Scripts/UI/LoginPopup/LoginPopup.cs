@@ -1,9 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
+using RofiSdk.UI.PopupManager;
 using TMPro;
 using UnityEngine;
 
-public class LoginPopup : MonoBehaviour
+public class LoginPopup : BasePopupUi
 {
     [SerializeField] private TMP_InputField usernameTextField;
     [SerializeField] private TMP_InputField passwordTextField;
@@ -13,7 +14,7 @@ public class LoginPopup : MonoBehaviour
     {
         InitUi();
     }
-
+    
     private void InitUi()
     {
         usernameTextField.contentType = TMP_InputField.ContentType.EmailAddress;
@@ -23,5 +24,16 @@ public class LoginPopup : MonoBehaviour
         passwordTextField.contentType = TMP_InputField.ContentType.Password;
         placeholderTextComponent = passwordTextField.placeholder as TMP_Text;
         if (placeholderTextComponent != null) placeholderTextComponent.text = "Enter Password";
+    }
+
+    public override void Open()
+    {
+        // gameObject.SetActive(true);
+    }
+
+    public override void Close(PopupCloseFlag closeFlag)
+    {
+        // gameObject.SetActive(false);
+        base.Close(closeFlag);
     }
 }

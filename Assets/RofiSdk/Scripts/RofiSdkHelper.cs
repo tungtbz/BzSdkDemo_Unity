@@ -1,7 +1,13 @@
-﻿using TinyMessenger;
+﻿
 
 namespace RofiSdk
 {
+#if UNITY_EDITOR
+    using Sirenix.OdinInspector;
+#endif
+    using TinyIoC;
+    using TinyMessenger;
+
     using UnityEngine;
 
     public class RofiSdkCallbackMessage : GenericTinyMessage<string>
@@ -11,23 +17,21 @@ namespace RofiSdk
         {
         }
     }
+
     public class RofiSdkHelper : PersistentSingleton<RofiSdkHelper>
     {
         IRofiBridge _rofiBridge;
         private string deeplinkURL;
-        private TinyMessengerHub _messengerHub;
-        protected override void Awake()
+        private TinyIoCContainer _iocContainer;
+        
+        public void Init()
         {
-            base.Awake();
-            _messengerHub = new TinyMessengerHub();
             gameObject.name = RofiConstants.SDK_OBJECT_NAME;
-#if PLATFORM_IOS
-            _rofiBridge = new iOSBridge();
-#elif UNITY_ANDROID
-            _rofiBridge = new AndroidBridge();
-#endif
-            Application.deepLinkActivated += ApplicationOndeepLinkActivated;
+            _iocContainer = TinyIoCContainer.Current;
+            SetupPopup();
+            SetupNativeBridge();
 
+            Application.deepLinkActivated += ApplicationOndeepLinkActivated;
             if (!string.IsNullOrEmpty(Application.absoluteURL))
             {
                 // Cold start and Application.absoluteURL not null so process Deep Link.
@@ -38,7 +42,27 @@ namespace RofiSdk
             else deeplinkURL = "[none]";
         }
 
-        public TinyMessengerHub MessageHub => _messengerHub;
+        private void SetupPopup()
+        {
+            // container.Register<PopupManager>().AsSingleton();
+            _iocContainer.Register<PopupManager>(PopupManager.Instance);
+        }
+
+        private void SetupNativeBridge()
+        {
+            var container = TinyIoCContainer.Current;
+#if UNITY_EDITOR
+           container.Register<IRofiBridge>( new EditorDummyBridge());
+#elif UNITY_IOS
+            container.Register<IRofiBridge>( new iOSBridge());
+#elif UNITY_ANDROID
+            container.Register<IRofiBridge>(new AndroidBridge());
+#endif
+            var _messengerHub = _iocContainer.Resolve<ITinyMessengerHub>();
+            Debug.Log("");
+        }
+
+        public TinyMessengerHub MessageHub => _iocContainer.Resolve<TinyMessengerHub>();  
 
         private void ApplicationOndeepLinkActivated(string url)
         {
@@ -48,17 +72,17 @@ namespace RofiSdk
             if (isDeepLinkValid)
             {
                 Debug.Log("OndeepLinkActivated");
-                _messengerHub.Publish(new RofiSdkCallbackMessage(this, "Referral Code:" + _rofiBridge.GetRefCodeCached()));
+                MessageHub.Publish(new RofiSdkCallbackMessage(this, "Referral Code:" + _rofiBridge.GetRefCodeCached()));
             }
             else
             {
-                _messengerHub.Publish(new RofiSdkCallbackMessage(this, url));
+                MessageHub.Publish(new RofiSdkCallbackMessage(this, url));
             }
         }
 
         public IRofiBridge NativeBridge => _rofiBridge;
 
-        #region callback from native
+#region callback from native
 
         public void OnVideoAdFailed(string description)
         {
@@ -73,45 +97,55 @@ namespace RofiSdk
         public void OnLoginInComplete(string data)
         {
             Debug.Log("[Unity] OnLoginComplete " + data);
-            _messengerHub.Publish(new RofiSdkCallbackMessage(this,data));
+            MessageHub.Publish(new RofiSdkCallbackMessage(this,data));
         }
 
         public void OnGetUserInfo(string data)
         {
             Debug.Log("[Unity] GetUserInfo " + data);
-            _messengerHub.Publish(new RofiSdkCallbackMessage(this,data));
+            MessageHub.Publish(new RofiSdkCallbackMessage(this,data));
         }
 
         public void OnGetUserInfoFailed(string mesage)
         {
             Debug.Log("[Unity] OnGetUserInfoFailed " + mesage);
-            _messengerHub.Publish(new RofiSdkCallbackMessage(this,mesage));
+            MessageHub.Publish(new RofiSdkCallbackMessage(this,mesage));
         }
 
         public void OnRefCheckInSuccess()
         {
             Debug.Log("[Unity] OnRefCheckInSuccess ");
-            _messengerHub.Publish(new RofiSdkCallbackMessage(this,"OnRefCheckInSuccess"));
+            MessageHub.Publish(new RofiSdkCallbackMessage(this,"OnRefCheckInSuccess"));
         }
 
         public void OnRefCheckInFail(string message)
         {
             Debug.Log("[Unity] OnGetUserInfoFailed " + message);
-            _messengerHub.Publish(new RofiSdkCallbackMessage(this,message));
+            MessageHub.Publish(new RofiSdkCallbackMessage(this,message));
         }
 
         public void OnGetRefDataSuccess(string data)
         {
             Debug.Log("[Unity] OnGetRefDataSuccess " + data);
-            _messengerHub.Publish(new RofiSdkCallbackMessage(this,data));
+            MessageHub.Publish(new RofiSdkCallbackMessage(this,data));
         }
 
         public void OnGetRefDataFail(string message)
         {
             Debug.Log("[Unity] OnGetRefDataFail " + message);  
-            _messengerHub.Publish(new RofiSdkCallbackMessage(this,message));
+            MessageHub.Publish(new RofiSdkCallbackMessage(this,message));
         }
 
         #endregion
+#if UNITY_EDITOR
+        [Button]
+        private void ShowLoginPopup()
+        {
+            PopupManager.Instance.OpenPopup(new OpenPopupSetting()
+            {
+                popupPrefabPath = "LoginPopup", type = PopupType.FULL_SCREEN
+            });
+        }
+#endif
     }
 }

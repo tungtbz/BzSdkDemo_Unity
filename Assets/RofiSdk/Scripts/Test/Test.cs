@@ -11,11 +11,16 @@ public class Test : MonoBehaviour
     [SerializeField] private Text _textField;
     private TinyMessageSubscriptionToken token;
     private string accessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiIxNDZiN2VlNi00ODgxLTRmM2ItYWIyMi1kNmU5Y2I5N2ViM2UiLCJlbWFpbCI6IiIsIndhbGxldCI6IiIsIm5iZiI6MTY2OTc4NjgyMiwiZXhwIjoxNjY5ODIyODIyLCJpYXQiOjE2Njk3ODY4MjIsImlzcyI6ImlkLnJvZmkuZ2FtZXMiLCJhdWQiOiJhcGkucm9maS5nYW1lcyJ9.eXZ-THGv0x-ZYji31t3RZdseG6Q5ocPffAXYP3HZ4g0";
+
+    private void Awake()
+    {
+        RofiSdkHelper.Instance.Init();
+    }
+
     private void Start()
     {
         // RofiSdkHelper.Instance.NativeBridge.WarmUp();
         RofiSdkHelper.Instance.NativeBridge.SetDebugMode(true);
-        
         token = RofiSdkHelper.Instance.MessageHub.Subscribe<RofiSdkCallbackMessage>(OnGetCallBackMessage);
     }
 
