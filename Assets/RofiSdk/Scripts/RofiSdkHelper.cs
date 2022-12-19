@@ -45,7 +45,8 @@ namespace RofiSdk
         private void SetupPopup()
         {
             // container.Register<PopupManager>().AsSingleton();
-            _iocContainer.Register<PopupManager>(PopupManager.Instance);
+            // _iocContainer.Register<PopupManager>(PopupManager.Instance);
+            SimpleObjectPool.Spawn("PopupCanvas");
         }
 
         private void SetupNativeBridge()
@@ -58,11 +59,10 @@ namespace RofiSdk
 #elif UNITY_ANDROID
             container.Register<IRofiBridge>(new AndroidBridge());
 #endif
-            var _messengerHub = _iocContainer.Resolve<ITinyMessengerHub>();
-            Debug.Log("");
+            _rofiBridge = container.Resolve<IRofiBridge>();
         }
 
-        public TinyMessengerHub MessageHub => _iocContainer.Resolve<TinyMessengerHub>();  
+        public ITinyMessengerHub MessageHub => _iocContainer.Resolve<ITinyMessengerHub>();  
 
         private void ApplicationOndeepLinkActivated(string url)
         {
@@ -141,10 +141,7 @@ namespace RofiSdk
         [Button]
         private void ShowLoginPopup()
         {
-            PopupManager.Instance.OpenPopup(new OpenPopupSetting()
-            {
-                popupPrefabPath = "LoginPopup", type = PopupType.FULL_SCREEN
-            });
+
         }
 #endif
     }

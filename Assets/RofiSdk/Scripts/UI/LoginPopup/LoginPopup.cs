@@ -17,6 +17,11 @@ public class LoginPopup : BasePopupUi
     
     private void InitUi()
     {
+        RectTransform rectTransform = transform.GetComponent<RectTransform>();
+ 
+        /*Left*/ rectTransform.offsetMin = Vector2.zero;
+        /*Right*/ rectTransform.offsetMax = Vector2.zero;
+
         usernameTextField.contentType = TMP_InputField.ContentType.EmailAddress;
         TMP_Text placeholderTextComponent = usernameTextField.placeholder as TMP_Text;
         if (placeholderTextComponent != null) placeholderTextComponent.text = "Enter username or email";

@@ -31,7 +31,10 @@ namespace RofiSdk
 
         public void OpenLoginScene()
         {
-          
+            PopupManager.Instance.OpenPopup(new OpenPopupSetting()
+            {
+                popupPrefabPath = "LoginPopup", type = PopupType.FULL_SCREEN
+            });
         }
 
         public void GetUserInfo(string accessToken)
@@ -61,7 +64,6 @@ namespace RofiSdk
 
         public void JoinCampaign(string accessToken)
         {
-      
         }
     }
 }
