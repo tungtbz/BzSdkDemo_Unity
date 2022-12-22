@@ -27,6 +27,26 @@
             _javaBridge.CallStatic("ShowVideoReward");
         }
 
+        public bool IsInterAdsAvailable()
+        {
+            return _javaBridge.CallStatic<bool>("IsInterAdsAvailable");
+        }
+
+        public void ShowInterAds(int requestCode)
+        {
+            _javaBridge.CallStatic("ShowInterAds", requestCode);
+        }
+
+        public void ShowVideoAds(string placement = null, int requestCode = 0)
+        {
+            _javaBridge.CallStatic("ShowVideoAds", placement, requestCode);
+        }
+
+        public void ShowInterAds()
+        {
+            throw new System.NotImplementedException();
+        }
+
         public void SetDebugMode(bool isDebug)
         {
             _javaBridge.CallStatic("SetDebug", isDebug);

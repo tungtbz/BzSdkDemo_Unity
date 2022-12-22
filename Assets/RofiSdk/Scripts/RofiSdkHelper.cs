@@ -1,4 +1,6 @@
-﻿using TinyMessenger;
+﻿using System.Collections.Generic;
+using RofiSdk.Models;
+using TinyMessenger;
 
 namespace RofiSdk
 {
@@ -70,6 +72,12 @@ namespace RofiSdk
             Debug.Log("[Unity] OnAdsComplete " + placement);
         }
 
+        public void OnVideoRewardedWithCode(string placement, int code)
+        {
+            Debug.Log("[Unity] OnAdsComplete " + placement + " code: " + code);
+            _messengerHub.Publish(new AdsCallback(this) {requestCode =  code});
+        }
+
         public void OnLoginInComplete(string data)
         {
             Debug.Log("[Unity] OnLoginComplete " + data);
@@ -104,6 +112,10 @@ namespace RofiSdk
         {
             Debug.Log("[Unity] OnGetRefDataSuccess " + data);
             _messengerHub.Publish(new RofiSdkCallbackMessage(this,data));
+           
+            Dictionary<string,object> referralResponse =(Dictionary<string,object>) SimpleJson.Deserialize(data);
+           // _messengerHub.Publish();
+           Debug.Log("Unity: " + (string) referralResponse["code"]);
         }
 
         public void OnGetRefDataFail(string message)
