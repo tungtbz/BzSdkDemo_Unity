@@ -36,7 +36,7 @@ public class Test : MonoBehaviour
         // RofiSdkHelper.Instance.NativeBridge.WarmUp();
         _tokens = new List<TinyMessageSubscriptionToken>();
         RofiSdkHelper.Instance.NativeBridge.SetDebugMode(true);
-        RofiSdkHelper.Instance.NativeBridge.SetMode((int) EvaiModes.DEMO_V1);
+        // RofiSdkHelper.Instance.NativeBridge.SetMode((int) EvaiModes.DEMO_V1);
 
         _tokens.Add(RofiSdkHelper.Instance.MessageHub.Subscribe<RofiSdkCallbackMessage>(OnGetCallBackMessage));
         _tokens.Add(RofiSdkHelper.Instance.MessageHub.Subscribe<AdsCallback>(OnAdsCallback));
