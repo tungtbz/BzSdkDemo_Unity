@@ -52,6 +52,11 @@
             _javaBridge.CallStatic("SetDebug", isDebug);
         }
 
+        public void SetMode(int mode)
+        {
+            _javaBridge.CallStatic("SetMode", mode);
+        }
+
         public void LogEvent(string eventName, Dictionary<string, string> eventData)
         {
             Debug.Log("AndroidBridge log event: " + SimpleJson.Serialize(eventData));

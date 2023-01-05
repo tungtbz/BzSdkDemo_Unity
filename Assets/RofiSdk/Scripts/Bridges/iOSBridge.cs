@@ -61,9 +61,29 @@
             else _ShowAdsWithPlacement(placementName);
         }
 
+        public bool IsInterAdsAvailable()
+        {
+            return false;
+        }
+
+        public void ShowInterAds(int requestCode)
+        {
+            
+        }
+
+        public void ShowVideoAds(string placement = null, int requestCode = 0)
+        {
+    
+        }
+
         public void LogEvent(string eventName, Dictionary<string, string> eventData)
         {
             _LogEvent(eventName, SimpleJson.Serialize(eventData));
+        }
+
+        public void SetMode(int mode)
+        {
+            
         }
 
         public void OpenLoginScene()
